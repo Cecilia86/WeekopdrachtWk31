@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function tothebackend() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                theObject = JSON.parse(this.responseText);
+                concole.log(this.responseText);
+                document.getElementById("uitkomst").innerHTML = theObject.name;
+            }
+            xhr.open("GET", "http://localhost:8082/api/employee/all", true); //localhost employee endpoint 
+            xhr.send()
+        }
+        function post() {
+            var obj = {};
+            obj.name = document.getElementById("name").value;
+            obj.salary = document.getElementById("salary").value;
+            objJSON = JSON.stringify(obj);
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                console.log("answer in console");
+            }
+            xhr.open("POST", "http://localhost:8082/api/employee/new", true); 
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.send(objJSON);
+        }
+
+        function getEmployees() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    var databaseContents = JSON.parse(this.responseText);
+                    var employeeString = "";
+                    var x;
+
+                    for (x = 0; x < databaseContents.length; x++) {
+
+                        employeeString +=
+                            `
+                    <div>
+                    <h3>Name = ${databaseContents[x].name}</h3>
+                    <p>Id = ${databaseContents[x].id}</p>
+                    <p>Salary = ${databaseContents[x].salary}
+                    </div>
+                    `
+                    }
+                }
+                document.getElementById("gettingalltheemployees").innerHTML = employeeString;
+            }
+            xhr.open("GET", "http://localhost:8082/api/employee/all", true)
+            xhr.send();
+        }
+
+
+
+
+    </script>
+
+</head>
+
+<body onload=getEmployees()>
+    <h1>Create a new employee</h1>
+    <input type=text id=name placeholder="Name"><input type=text id=salary placeholder="Salary"><input type=button
+        onclick=post() value=create>
+
+    <div id="gettingalltheemployees">
+        <h1>See list of employees</h1>
+    </div>
+    <input type=button onclick=getEmployees() value="Get all employees">
+
+
+    <hr>
+    <hr>
+    <input type="button" onclick="tothebackend()" value="button to the back">
+</body>
+
+</html>
